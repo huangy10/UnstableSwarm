@@ -19,12 +19,11 @@ public class Sketch extends PApplet {
     private State state = State.Free;
     private PImage logo;
     private float logoScale = 1.5f;
-    private int logoBGColor = color(0, 0, 0, 255);
-//    private int defaultParticleColor = color(16, 51, 128, 255);
-    private int defaultParticleColor = color(150);
+    private int defaultParticleColor = color(80);
     final int swarmSize = 30;
     final int swarmNum = 100;
     private Swarm[] swarms;
+    private List<Swarm> swarmHeaders;
     private List<Particle> particles;
 
     @Override
@@ -37,11 +36,12 @@ public class Sketch extends PApplet {
     @Override
     public void setup() {
         loadLogo();
+        GatherMovePattern.defaultPattern.gravityCenter = new PVector(width / 2, height / 2);
 
         createParticlesAndSwarms();
 
         frameRate(30);
-        background(0);
+        background(255);
 
         ParticleMovePattern.setGlobalEnabledPattern(GatherMovePattern.defaultPattern);
 
@@ -52,9 +52,9 @@ public class Sketch extends PApplet {
     @Override
     public void draw() {
 //        noStroke();
-//        fill(0, 30);
+//        fill(255, 50);
 //        rect(0, 0, width, height);
-        background(0);
+        background(255);
         for (Swarm s: swarms) {
             s.update();
         }
@@ -63,6 +63,7 @@ public class Sketch extends PApplet {
             s.render();
         }
         t += 0.01f;
+        surface.setTitle("Framerate: " + frameRate);
     }
 
     private void loadLogo() {
@@ -72,16 +73,19 @@ public class Sketch extends PApplet {
 
     private void createParticlesAndSwarms() {
         println("Create particles and swarms");
-        // gravity center should be the center of the screen
-        Particle.gravityCenter = new PVector(width / 2, height / 2);
 
         particles = new ArrayList<>();
+        swarmHeaders = new ArrayList<>();
         swarms = new Swarm[swarmNum];
         for (int i = 0; i < swarmNum; i += 1) {
             // particles is created in this constructor
             swarms[i] = new Swarm(i, swarmSize, true);
+            swarms[i].clusterLeaders = swarmHeaders;
             swarms[i].setEnabled(true);
             particles.addAll(Arrays.asList(swarms[i].particles));
+        }
+        for (int i = 0; i < 3; i+= 1) {
+            swarms[i].setAsAttractionHeader();
         }
 
         // init particles globally
@@ -94,10 +98,11 @@ public class Sketch extends PApplet {
         logo.loadPixels();
         for (Particle p: particles) {
             float xRoot, yRoot;
+            int colorHit;
             while (true) {
                 xRoot = random(logoWidth);
                 yRoot = random(logoHeight);
-                int colorHit = logo.get(
+                colorHit = logo.get(
                         (int) (xRoot / logoScale), (int) (yRoot / logoScale));
                 if (alpha(colorHit) > 0) {
                     break;
@@ -108,15 +113,15 @@ public class Sketch extends PApplet {
             p.id = particleGlobalId;
             p.rootPos.set(xRoot, yRoot);
             p.loc.set(xRoot, yRoot);
-            p.defaultColor = defaultParticleColor;
+            p.defaultColor = colorHit;
             p.noiseSeed = (float) p.id / 300;
 
             particleGlobalId += 1;
         }
 
         for (Swarm s: swarms) {
-            s.configFromParticle();
-//            s.setEnabled(false);
+//            s.configFromParticle();
+            s.setEnabled(false);
         }
 
         println("Done creating particles and swarms");

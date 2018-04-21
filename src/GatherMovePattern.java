@@ -1,8 +1,9 @@
 import processing.core.PVector;
 
 public class GatherMovePattern extends ParticleMovePattern {
-
     static final GatherMovePattern defaultPattern = new GatherMovePattern();
+    PVector gravityCenter;
+    float gravityStrength = 0.3f;
 
     @Override
     void update(Particle p) {
@@ -46,11 +47,11 @@ public class GatherMovePattern extends ParticleMovePattern {
     void applyGravity(Particle p) {
         float ringSlowDown = 0.5f;  // legacy magic number
         float ringContraintR = 0;
-        PVector dx = PVector.sub(p.loc, Particle.gravityCenter).mult(ringSlowDown);
+        PVector dx = PVector.sub(p.loc, gravityCenter).mult(ringSlowDown);
         float distance = dx.mag();
         float tmp = Math.abs(distance - ringContraintR) / Sketch.getSK().height / 2;
 
         dx.mult(1 - tmp * 0.3f);
-        p.loc.set(Particle.gravityCenter).add(dx.div(ringSlowDown));
+        p.loc.set(gravityCenter).add(dx.div(ringSlowDown));
     }
 }

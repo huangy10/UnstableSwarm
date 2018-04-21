@@ -7,14 +7,12 @@ public class Movable {
     PVector force;
     PVector friction;
     // gravity should be global
-    static PVector gravityCenter;
     float mass;
     float frictionAcc;
     float noiseSeed;
     int id;
 
     static boolean enableGravity = false;
-    static float gravityLevel = 1;
     static float boundaryGap = 10;
 
     // Movable should always has an id

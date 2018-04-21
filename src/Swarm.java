@@ -8,7 +8,7 @@ public class Swarm extends Movable {
     Particle[] particles;
     boolean enabled = false;
     boolean isClusterLeader = false;
-    float clusterAttractionRange = 100;
+    float clusterAttractionRange = 50f;
     int color;
     int stopColor;
     float headSize = 8;
@@ -16,7 +16,7 @@ public class Swarm extends Movable {
     private LinkedList<PVector> trace;
     private int traceSizeLimit = 5;
     private float maxSpeed;
-    private List<Swarm> clusterLeaders;
+    List<Swarm> clusterLeaders;
 
     private Sketch sk;
     private PGraphics pGraphics;
@@ -24,7 +24,7 @@ public class Swarm extends Movable {
     private static final float ATTRACTION = 0.05f;
     private static final float DAMPING = 0.05f;
     private static final float PERLIN_STRENGTH = 1.5f;
-    private static final float BOUNDARY_AVOID_RANGE = 20;
+    private static final float BOUNDARY_AVOID_RANGE = 30;
     private static final float BOUNDARY_AVOID_STRENGTH = 0.5f;
 
     Swarm(int id, int size, boolean createParticles) {
@@ -34,8 +34,8 @@ public class Swarm extends Movable {
         trace = new LinkedList<>();
         noiseSeed = sk.random(1000);
         maxSpeed = sk.random(5, 13);
-        stopColor = sk.color(30);
-        color = sk.color(200);
+        stopColor = sk.color(200);
+        color = sk.color(30);
         mass = sk.random(20, 30);
 
         if (createParticles) {
@@ -145,7 +145,7 @@ public class Swarm extends Movable {
         }
         PVector d = PVector.sub(clusterLeader.loc, loc);
         float dist = d.mag();
-        if (dist > clusterAttractionRange) {
+        if (dist < clusterAttractionRange) {
             return;
         }
 
@@ -159,7 +159,8 @@ public class Swarm extends Movable {
     }
 
     private void applyPerlinEngine() {
-        float noise = sk.noise(loc.mag(), loc.heading(), sk.getTime()) - 0.5f;
+        PVector tmp = loc.copy().sub(sk.width / 2, sk.height / 2);
+        float noise = sk.noise(tmp.mag(), tmp.heading(), sk.getTime()) - 0.5f;
         PVector perlin = velocity.copy().rotate(Sketch.PI / 2).setMag(PERLIN_STRENGTH * noise);
         acce.add(perlin);
     }
@@ -189,5 +190,13 @@ public class Swarm extends Movable {
 
     float getMaxSpeed() {
         return maxSpeed;
+    }
+
+    public void setAsAttractionHeader() {
+        isClusterLeader = true;
+        color = sk.color(255, 0, 0);
+        stopColor = sk.color(100, 0, 0);
+        mass = 20f;
+        clusterLeaders.add(this);
     }
 }
