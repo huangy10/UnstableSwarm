@@ -81,7 +81,7 @@ public class Sketch extends PApplet {
         }
 
         // init particles globally
-
+        Particle.enableGravity = true;
         int particleGlobalId = 0;
         for (Particle p: particles) {
             float xRoot, yRoot;
@@ -97,7 +97,7 @@ public class Sketch extends PApplet {
             p.rootPos.set(xRoot, yRoot);
             p.loc.set(xRoot, yRoot);
             p.defaultColor = defaultParticleColor;
-            p.noiseSeed = (float) p.id / (swarmSize * swarmNum);
+            p.noiseSeed = (float) p.id / 100;
 
             particleGlobalId += 1;
         }
