@@ -18,7 +18,7 @@ public class Sketch extends PApplet {
     private float t;
     private State state = State.Free;
     private PImage logo;
-    private float logoScale = 0.5f;
+    private float logoScale = 1.5f;
     private int logoBGColor = color(0, 0, 0, 255);
     private int defaultParticleColor = color(16, 51, 128, 255);
 
@@ -83,16 +83,24 @@ public class Sketch extends PApplet {
         // init particles globally
         Particle.enableGravity = true;
         int particleGlobalId = 0;
+        float logoWidth = logo.width * logoScale;
+        float logoHeight = logo.height * logoScale;
+        float logoOffsetX = (width - logoWidth) / 2;
+        float logoOffsetY = (height - logoHeight) / 2;
+        logo.loadPixels();
         for (Particle p: particles) {
             float xRoot, yRoot;
             while (true) {
-                xRoot = random(width);
-                yRoot = random(height);
-                int colorHit = logo.get((int) xRoot, (int) yRoot);
+                xRoot = random(logoWidth);
+                yRoot = random(logoHeight);
+                int colorHit = logo.get(
+                        (int) (xRoot / logoScale), (int) (yRoot / logoScale));
                 if (alpha(colorHit) > 0) {
                     break;
                 }
             }
+            xRoot += logoOffsetX;
+            yRoot += logoOffsetY;
             p.id = particleGlobalId;
             p.rootPos.set(xRoot, yRoot);
             p.loc.set(xRoot, yRoot);
