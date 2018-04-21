@@ -17,6 +17,7 @@ public class Movable {
     static float gravityLevel = 1;
     static float stopThreshold = 0.01f;
     static float airFrictionThreshold = 3;
+    static float boundaryGap = 10;
 
     // Movable should always has an id
     Movable(int id) {
@@ -70,5 +71,11 @@ public class Movable {
 
         dx.mult(1 - tmp * 0.3f);
         loc.set(gravityCenter).add(dx.div(ringSlowDown));
+    }
+
+    boolean outOfScreen() {
+        Sketch sk = Sketch.getSK();
+        return loc.x < - boundaryGap || loc.x > sk.width + boundaryGap ||
+                loc.y < - boundaryGap || loc.y > sk.height + boundaryGap;
     }
 }

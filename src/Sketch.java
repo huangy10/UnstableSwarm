@@ -20,8 +20,8 @@ public class Sketch extends PApplet {
     private PImage logo;
     private float logoScale = 1.5f;
     private int logoBGColor = color(0, 0, 0, 255);
-    private int defaultParticleColor = color(16, 51, 128, 255);
-
+//    private int defaultParticleColor = color(16, 51, 128, 255);
+    private int defaultParticleColor = color(150);
     final int swarmSize = 30;
     final int swarmNum = 100;
     private Swarm[] swarms;
@@ -49,9 +49,10 @@ public class Sketch extends PApplet {
 
     @Override
     public void draw() {
-        noStroke();
-        fill(0, 30);
-        rect(0, 0, width, height);
+//        noStroke();
+//        fill(0, 30);
+//        rect(0, 0, width, height);
+        background(0);
         for (Swarm s: swarms) {
             s.update();
         }
@@ -77,6 +78,7 @@ public class Sketch extends PApplet {
         for (int i = 0; i < swarmNum; i += 1) {
             // particles is created in this constructor
             swarms[i] = new Swarm(i, swarmSize, true);
+            swarms[i].setEnabled(true);
             particles.addAll(Arrays.asList(swarms[i].particles));
         }
 
@@ -108,6 +110,11 @@ public class Sketch extends PApplet {
             p.noiseSeed = (float) p.id / 300;
 
             particleGlobalId += 1;
+        }
+
+        for (Swarm s: swarms) {
+            s.configFromParticle();
+//            s.setEnabled(false);
         }
 
         println("Done creating particles and swarms");
