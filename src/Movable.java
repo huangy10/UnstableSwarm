@@ -19,7 +19,7 @@ public class Movable {
     Movable(int id) {
         this.id = id;
         this.mass = 1;
-        this.frictionAcc = 0.01f;
+        this.frictionAcc = 0.2f;
         this.noiseSeed = Sketch.getSK().random(0, 1000);
 
         this.loc = new PVector();

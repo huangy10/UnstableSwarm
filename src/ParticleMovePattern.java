@@ -14,6 +14,12 @@ public class ParticleMovePattern {
     }
 
     static void setGlobalEnabledPattern(ParticleMovePattern globalEnabledPattern) {
+        if(!globalEnabledPattern.equals(ParticleMovePattern.globalEnabledPattern)) {
+            globalEnabledPattern.patternIsEnabled();
+            if (ParticleMovePattern.globalEnabledPattern != null)
+                ParticleMovePattern.globalEnabledPattern.patternIsDisabled();
+        }
+
         ParticleMovePattern.globalEnabledPattern = globalEnabledPattern;
     }
 
@@ -22,6 +28,16 @@ public class ParticleMovePattern {
     }
 
     void render(Particle p) {
-        throw  new NotImplementedException();
+        sk.fill(p.defaultColor);
+        sk.noStroke();
+        sk.ellipse(p.loc.x, p.loc.y, 2, 2);
+    }
+
+    void patternIsEnabled() {
+
+    }
+
+    void patternIsDisabled() {
+
     }
 }

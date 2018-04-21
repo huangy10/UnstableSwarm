@@ -18,9 +18,9 @@ public class Sketch extends PApplet {
     private float t;
     private State state = State.Free;
     private PImage logo;
-    private float logoScale = 1.5f;
+    private float logoScale = 1f;
     private int defaultParticleColor = color(80);
-    final int swarmSize = 30;
+    final int swarmSize = 40;
     final int swarmNum = 100;
     private Swarm[] swarms;
     private List<Swarm> swarmHeaders;
@@ -37,6 +37,7 @@ public class Sketch extends PApplet {
     public void setup() {
         loadLogo();
         GatherMovePattern.defaultPattern.gravityCenter = new PVector(width / 2, height / 2);
+        LogoMovePattern.defaultPattern.gravityCenter = new PVector(width / 2, height / 2);
 
         createParticlesAndSwarms();
 
@@ -64,6 +65,17 @@ public class Sketch extends PApplet {
         }
         t += 0.01f;
         surface.setTitle("Framerate: " + frameRate);
+    }
+
+    @Override
+    public void mousePressed() {
+        if (state == State.Gather) {
+            ParticleMovePattern.setGlobalEnabledPattern(LogoMovePattern.defaultPattern);
+            state = State.Logo;
+        } else {
+            ParticleMovePattern.setGlobalEnabledPattern(GatherMovePattern.defaultPattern);
+            state = State.Gather;
+        }
     }
 
     private void loadLogo() {

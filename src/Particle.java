@@ -15,6 +15,7 @@ public class Particle extends Movable {
 
     Particle() {
         super(0);
+        this.mass = 10;
         this.rootPos = new PVector();
     }
 

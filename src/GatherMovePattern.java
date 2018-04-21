@@ -7,9 +7,7 @@ public class GatherMovePattern extends ParticleMovePattern {
 
     @Override
     void update(Particle p) {
-        float forceDir = sk.perlinNoiseWithSeed(p.noiseSeed) * sk.PI * 6;
-        float forceStrength = p.frictionAcc * 6;
-        p.force.set(forceStrength * Sketch.cos(forceDir), forceStrength * Sketch.sin(forceDir));
+        computeForce(p);
         applyForce(p);
 
         if (p.loc.x < 0 || p.loc.y < 0 || p.loc.x > sk.width || p.loc.y > sk.height) {
@@ -17,11 +15,10 @@ public class GatherMovePattern extends ParticleMovePattern {
         }
     }
 
-    @Override
-    void render(Particle p) {
-        sk.fill(p.defaultColor);
-        sk.noStroke();
-        sk.ellipse(p.loc.x, p.loc.y, 2, 2);
+    void computeForce(Particle p) {
+        float forceDir = sk.perlinNoiseWithSeed(p.noiseSeed) * sk.PI * 6;
+        float forceStrength = p.frictionAcc * 3;
+        p.force.set(forceStrength * Sketch.cos(forceDir), forceStrength * Sketch.sin(forceDir));
     }
 
     void applyForce(Particle p) {
