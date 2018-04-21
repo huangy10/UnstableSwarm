@@ -15,8 +15,6 @@ public class Movable {
 
     static boolean enableGravity = false;
     static float gravityLevel = 1;
-    static float stopThreshold = 0.01f;
-    static float airFrictionThreshold = 3;
     static float boundaryGap = 10;
 
     // Movable should always has an id
@@ -39,38 +37,6 @@ public class Movable {
 
     void render() {
 
-    }
-
-    void applyForce() {
-        computeFriction();
-        PVector a = PVector.add(force, friction).div(mass);
-        velocity.add(a);
-        loc.add(velocity);
-        if (enableGravity) {
-            applyGravity();
-        }
-    }
-
-    void computeFriction() {
-        float v = velocity.mag();
-        float frictionStrength = frictionAcc;
-        if (v < stopThreshold) {
-            friction.set(force).setMag(-frictionAcc);
-        } else {
-            friction.set(velocity).setMag(
-                    - frictionAcc - Math.max(0, v - airFrictionThreshold) / 5);
-        }
-    }
-
-    void applyGravity() {
-        float ringSlowDown = 0.5f;  // legacy magic number
-        float ringContraintR = 0;
-        PVector dx = PVector.sub(loc, gravityCenter).mult(ringSlowDown);
-        float distance = dx.mag();
-        float tmp = Math.abs(distance - ringContraintR) / Sketch.getSK().height / 2;
-
-        dx.mult(1 - tmp * 0.3f);
-        loc.set(gravityCenter).add(dx.div(ringSlowDown));
     }
 
     boolean outOfScreen() {

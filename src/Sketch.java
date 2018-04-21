@@ -43,6 +43,8 @@ public class Sketch extends PApplet {
         frameRate(30);
         background(0);
 
+        ParticleMovePattern.setGlobalEnabledPattern(GatherMovePattern.defaultPattern);
+
         println("Done setup");
         println("----");
     }
