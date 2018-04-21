@@ -31,6 +31,7 @@ public class Swarm extends Movable {
         particles = new Particle[size];
         for (int i = 0; i < size; i += 1) {
             particles[i] = new Particle();
+            particles[i].swarm = this;
         }
     }
 

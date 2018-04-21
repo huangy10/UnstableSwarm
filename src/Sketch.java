@@ -97,7 +97,7 @@ public class Sketch extends PApplet {
             p.rootPos.set(xRoot, yRoot);
             p.loc.set(xRoot, yRoot);
             p.defaultColor = defaultParticleColor;
-            p.noiseSeed = (float) p.id / 100;
+            p.noiseSeed = (float) p.id / 300;
 
             particleGlobalId += 1;
         }
@@ -123,5 +123,9 @@ public class Sketch extends PApplet {
 
     float perlinNoiseWithSeed(float seed) {
         return noise(seed, t);
+    }
+
+    float perlinNoiseWithSeedAndSwarmId(float seed, int swarmId) {
+        return noise(swarmId * 10, seed, t);
     }
 }
