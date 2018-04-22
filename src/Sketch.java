@@ -65,19 +65,12 @@ public class Sketch extends PApplet {
 
     @Override
     public void draw() {
-        background(255);
         MovePattern.getGlobalEnabledPattern().update();
         for (Swarm s: swarms) {
             s.update();
         }
 
-        particleLayer.beginDraw();
-        particleLayer.noStroke();
-        particleLayer.fill(255, 50);
-        particleLayer.rect(0, 0, width, height);
-
-        swarmLayer.beginDraw();
-        swarmLayer.clear();
+        MovePattern.getGlobalEnabledPattern().render();
 
         for (Swarm s: swarms) {
             s.render();
@@ -171,6 +164,8 @@ public class Sketch extends PApplet {
             p.loc.set(xRoot, yRoot);
             p.pLoc.set(p.loc);
             p.defaultColor = colorHit;
+            p.color = colorHit;
+            p.pColor = colorHit;
             p.noiseSeed = (float) p.id / 300;
 
             particleGlobalId += 1;

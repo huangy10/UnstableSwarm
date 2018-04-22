@@ -8,15 +8,19 @@ public class LogoMovePattern extends GatherMovePattern {
         super();
         gravityStrength = 1f;
         enableRender = true;
+        enableColorTransition = false;
+        enableColorEasyIn = true;
     }
 
     @Override
     void patternIsEnabled() {
+        super.patternIsEnabled();
         transCounter = (int) sk.frameRate * 3;
     }
 
     @Override
     void patternIsDisabled() {
+        super.patternIsDisabled();
         transCounter = 0;
     }
 

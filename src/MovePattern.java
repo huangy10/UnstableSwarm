@@ -1,3 +1,4 @@
+import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PVector;
 
@@ -12,6 +13,11 @@ public class MovePattern {
     int switchColorSpeed = 30;
     int switchColorBeginFC = 0;
     boolean doSwithcColor = false;
+    boolean enableColorEasyIn = true;
+    int colorEasyInLenght = 150;
+    int defaultBgColor = 0xffffff;
+    int bgColor = 0xffffff;
+    int pBgColor = 0xffffff;
 
     MovePattern() {
         sk = Sketch.getSK();
@@ -50,6 +56,45 @@ public class MovePattern {
     void update(Swarm s) {
     }
 
+    void render() {
+        int fillColor = getBgColor();
+        Sketch.println(fillColor, defaultBgColor);
+        sk.background(fillColor);
+        PGraphics particleLayer = sk.getParticleLayer();
+        particleLayer.beginDraw();
+        particleLayer.noStroke();
+        particleLayer.fill((fillColor & 0x00ffffff ) | (50 << 24));
+//        particleLayer.fill(255, 50);
+        particleLayer.rect(0, 0, sk.width, sk.height);
+
+        PGraphics swarmLayer = sk.getSwarmLayer();
+        swarmLayer.beginDraw();
+        swarmLayer.clear();
+    }
+
+    int getBgColor() {
+        if (enableColorTransition) {
+            if (doSwithcColor) {
+                pBgColor = bgColor;
+                bgColor = sk.colorPlate[activatedColorPlateIdx][0];
+                return bgColor;
+            } else {
+                float lerp = (float) (sk.frameCount - switchColorBeginFC) / (float) switchColorSpeed;
+                return lerp > 1 ? bgColor : sk.lerpColor(pBgColor, bgColor, lerp);
+            }
+        } else if (enableColorEasyIn) {
+            if (switchColorBeginFC == sk.frameCount) {
+                pBgColor = bgColor;
+                bgColor = defaultBgColor;
+                return bgColor;
+            } else {
+                float lerp = (float) (sk.frameCount - switchColorBeginFC) / (float) colorEasyInLenght;
+                return lerp > 1 ? bgColor : sk.lerpColor(pBgColor, bgColor, lerp);
+            }
+        }
+        return defaultBgColor;
+    }
+
     void render(Particle p) {
         PGraphics pg = sk.getParticleLayer();
         int strokeColor = p.defaultColor;
@@ -58,10 +103,19 @@ public class MovePattern {
                 // switch color
                 p.pColor = p.color;
                 int[] colorPlate = sk.colorPlate[activatedColorPlateIdx];
-                p.color = colorPlate[(int) sk.random(colorPlate.length)];
+                p.color = colorPlate[(int) sk.random(colorPlate.length - 1) + 1];
                 strokeColor = p.pColor;
             } else {
-                float lerp = (sk.frameCount - switchColorBeginFC) / (float) switchColorSpeed;
+                float lerp = (float) (sk.frameCount - switchColorBeginFC) / (float) switchColorSpeed;
+                strokeColor = lerp > 1 ? p.color : sk.lerpColor(p.pColor, p.color, lerp);
+            }
+        } else if (enableColorEasyIn) {
+            if (switchColorBeginFC == sk.frameCount) {
+                p.pColor = p.color;
+                p.color = p.defaultColor;
+                strokeColor = p.pColor;
+            } else {
+                float lerp = (float) (sk.frameCount - switchColorBeginFC) / (float) colorEasyInLenght;
                 strokeColor = lerp > 1 ? p.color : sk.lerpColor(p.pColor, p.color, lerp);
             }
         } else {
@@ -102,7 +156,9 @@ public class MovePattern {
     }
 
     void patternIsEnabled() {
-
+        if (enableColorEasyIn) {
+            switchColorBeginFC = sk.frameCount + 1;
+        }
     }
 
     void patternIsDisabled() {

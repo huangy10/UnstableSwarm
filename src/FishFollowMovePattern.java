@@ -12,6 +12,7 @@ public class FishFollowMovePattern extends MovePattern {
     FishFollowMovePattern() {
         super();
         enableColorTransition = true;
+        enableColorEasyIn = false;
     }
 
     @Override
