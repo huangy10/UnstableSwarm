@@ -15,6 +15,11 @@ public class GatherMovePattern extends ParticleMovePattern {
         }
     }
 
+    @Override
+    void render(Swarm s) {
+
+    }
+
     void computeForce(Particle p) {
         float forceDir = sk.perlinNoiseWithSeed(p.noiseSeed) * sk.PI * 6;
         float forceStrength = p.frictionAcc * 3;

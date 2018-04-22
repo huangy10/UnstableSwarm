@@ -20,8 +20,8 @@ public class Sketch extends PApplet {
     private PImage logo;
     private float logoScale = 1f;
     private int defaultParticleColor = color(80);
-    final int swarmSize = 40;
-    final int swarmNum = 100;
+    final int swarmSize = 100;
+    final int swarmNum = 30;
     private Swarm[] swarms;
     private List<Swarm> swarmHeaders;
     private List<Particle> particles;
@@ -70,7 +70,7 @@ public class Sketch extends PApplet {
     @Override
     public void mousePressed() {
         if (state == State.Gather) {
-            ParticleMovePattern.setGlobalEnabledPattern(LogoMovePattern.defaultPattern);
+            ParticleMovePattern.setGlobalEnabledPattern(FishFollowMovePattern.defaultPattern);
             state = State.Logo;
         } else {
             ParticleMovePattern.setGlobalEnabledPattern(GatherMovePattern.defaultPattern);
@@ -132,11 +132,19 @@ public class Sketch extends PApplet {
         }
 
         for (Swarm s: swarms) {
-//            s.configFromParticle();
-            s.setEnabled(false);
+            s.configFromParticle();
+//            s.setEnabled(false);
         }
 
         println("Done creating particles and swarms");
+    }
+
+    void relocateSwarms() {
+        for (Swarm s: swarms) {
+            s.loc.set(width / 2, height / 2);
+            s.velocity.set(PVector.random2D().limit(0.1f));
+            s.trace.clear();
+        }
     }
 
     public float getTime() {

@@ -13,7 +13,7 @@ public class Movable {
     int id;
 
     static boolean enableGravity = false;
-    static float boundaryGap = 10;
+    static float boundaryGap = 100;
 
     // Movable should always has an id
     Movable(int id) {
