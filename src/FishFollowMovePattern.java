@@ -16,14 +16,15 @@ public class FishFollowMovePattern extends ParticleMovePattern {
             p.loc.set(sk.random(sk.width), sk.random(sk.height));
         }
         p.acce.set(0, 0);
-        applyClusterLeaderAttraction(p);
+        applyClusterLeaderAttraction(p, false);
         applyDamping(p);
         applyPerlinEngine(p);
         applyBoundaryAvoidance(p);
 
         swim(p);
-        p.velocity.add(p.acce);
-        p.loc.add(p.velocity);
+
+//        p.velocity.mult(sk.random(0.9f, 1.0f));
+        p.applyNewtonForce();
     }
 
     @Override
@@ -40,8 +41,7 @@ public class FishFollowMovePattern extends ParticleMovePattern {
         applyBoundaryAvoidance(s);
 
         swim(s);
-        s.velocity.add(s.acce).limit(s.maxSpeed);
-        s.loc.add(s.velocity);
+        s.applyNewtonForce();
     }
 
     void swim(Swarm s) {
@@ -79,20 +79,23 @@ public class FishFollowMovePattern extends ParticleMovePattern {
         m.acce.add(damping);
     }
 
-    void applyClusterLeaderAttraction(Particle p) {
-//        Swarm clusterLead = p.swarm;
-//        PVector d = PVector.sub(clusterLead.loc, p.loc);
-//        float dist = d.mag();
-//        if (dist < clusterLead.clusterAttractionRange / 2) {
-//            return;
-//        }
-//        PVector gForce = d.mult(ATTRACTION * clusterLead.mass * p.mass / dist / dist * 3);
-//        p.acce.add(gForce);
-        for (Swarm clusterLead: p.swarm.clusterLeaders) {
+    void applyClusterLeaderAttraction(Particle p, boolean followGlobalHead) {
+        if (followGlobalHead) {
+            for (Swarm clusterLead : p.swarm.clusterLeaders) {
+                PVector d = PVector.sub(clusterLead.loc, p.loc);
+                float dist = d.mag();
+                if (dist < clusterLead.clusterAttractionRange) {
+                    continue;
+                }
+                PVector gForce = d.mult(ATTRACTION * clusterLead.mass * p.mass / dist / dist * 2);
+                p.acce.add(gForce);
+            }
+        } else {
+            Swarm clusterLead = p.swarm;
             PVector d = PVector.sub(clusterLead.loc, p.loc);
             float dist = d.mag();
-            if (dist < clusterLead.clusterAttractionRange) {
-                continue;
+            if (dist < clusterLead.clusterAttractionRange / 2) {
+                return;
             }
             PVector gForce = d.mult(ATTRACTION * clusterLead.mass * p.mass / dist / dist * 2);
             p.acce.add(gForce);

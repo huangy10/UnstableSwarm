@@ -43,8 +43,16 @@ public class Swarm extends Movable {
     }
 
     void configFromParticle() {
-        loc.set(particles[0].loc);
+        int idx = (int) sk.random(size);
+        Particle p = particles[idx];
+        loc.set(p.loc);
         velocity.set(PVector.random2D().limit(0.1f));
+        color = p.defaultColor;
+        stopColor = sk.color(
+                sk.red(p.defaultColor),
+                sk.green(p.defaultColor),
+                sk.blue(p.defaultColor),
+                sk.alpha(p.defaultColor) / 3);
     }
 
     @Override
