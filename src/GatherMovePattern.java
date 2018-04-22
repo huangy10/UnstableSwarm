@@ -1,6 +1,6 @@
 import processing.core.PVector;
 
-public class GatherMovePattern extends ParticleMovePattern {
+public class GatherMovePattern extends MovePattern {
     static final GatherMovePattern defaultPattern = new GatherMovePattern();
     PVector gravityCenter;
     float gravityStrength = 0.3f;
@@ -15,9 +15,8 @@ public class GatherMovePattern extends ParticleMovePattern {
         computeForce(p);
         applyForce(p);
 
-        if (p.loc.x < 0 || p.loc.y < 0 || p.loc.x > sk.width || p.loc.y > sk.height) {
-            p.loc.set(sk.random(sk.width), sk.random(sk.height));
-        }
+        if (p.loc.x < 0 || p.loc.y < 0 || p.loc.x > sk.width || p.loc.y > sk.height)
+            p.reloc();
     }
 
     @Override
@@ -32,12 +31,14 @@ public class GatherMovePattern extends ParticleMovePattern {
     }
 
     void applyForce(Particle p) {
+        PVector pLoc = p.loc.copy();
         computeFriction(p);
         p.acce.set(PVector.add(p.force, p.friction).div(p.mass));
         p.applyNewtonForce();
         if (Particle.enableGravity) {
             applyGravity(p);
         }
+        p.pLoc.set(pLoc);
     }
 
     void computeFriction(Particle p) {

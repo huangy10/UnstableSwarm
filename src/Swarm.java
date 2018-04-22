@@ -1,4 +1,3 @@
-import processing.core.PGraphics;
 import processing.core.PVector;
 
 import java.util.*;
@@ -45,7 +44,7 @@ public class Swarm extends Movable {
     void configFromParticle() {
         int idx = (int) sk.random(size);
         Particle p = particles[idx];
-        loc.set(p.loc);
+        updateLoc(p.loc);
         velocity.set(PVector.random2D().limit(0.1f));
         color = p.defaultColor;
         stopColor = sk.color(
@@ -61,7 +60,7 @@ public class Swarm extends Movable {
             p.update();
         }
         if (enabled) {
-            ParticleMovePattern.getGlobalEnabledPattern().update(this);
+            MovePattern.getGlobalEnabledPattern().update(this);
         }
 
     }
@@ -73,7 +72,7 @@ public class Swarm extends Movable {
         }
 
         if (enabled) {
-            ParticleMovePattern.getGlobalEnabledPattern().render(this);
+            MovePattern.getGlobalEnabledPattern().render(this);
         }
     }
 
@@ -83,16 +82,14 @@ public class Swarm extends Movable {
             super.applyNewtonForce();
         } else {
             velocity.add(acce).limit(maxSpeed);
-            loc.add(velocity);
+            updateLoc();
         }
     }
 
     void setEnabled(boolean enabled) {
         this.enabled = enabled;
         if (enabled) {
-            loc.set(particles[0].loc);
-            velocity.set(particles[0].velocity);
-            acce.set(0, 0);
+            configFromParticle();
         } else {
             trace.clear();
         }

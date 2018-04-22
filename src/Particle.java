@@ -1,9 +1,4 @@
-import com.sun.istack.internal.NotNull;
-import jdk.nashorn.internal.objects.Global;
-import processing.core.PApplet;
 import processing.core.PVector;
-
-import java.util.ArrayList;
 
 public class Particle extends Movable {
     int defaultColor;
@@ -21,11 +16,11 @@ public class Particle extends Movable {
 
     @Override
     void update() {
-        ParticleMovePattern.getGlobalEnabledPattern().update(this);
+        MovePattern.getGlobalEnabledPattern().update(this);
     }
 
     @Override
     void render() {
-        ParticleMovePattern.getGlobalEnabledPattern().render(this);
+        MovePattern.getGlobalEnabledPattern().render(this);
     }
 }

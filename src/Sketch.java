@@ -3,7 +3,6 @@ import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PVector;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +26,9 @@ public class Sketch extends PApplet {
     private List<Swarm> swarmHeaders;
     private List<Particle> particles;
 
+    private PGraphics swarmLayer;
+    private PGraphics particleLayer;
+
     @Override
     public void settings() {
         if (Sketch.sk == null)
@@ -41,11 +43,12 @@ public class Sketch extends PApplet {
         LogoMovePattern.defaultPattern.gravityCenter = new PVector(width / 2, height / 2);
 
         createParticlesAndSwarms();
+        createLayers();
 
         frameRate(30);
         background(255);
 
-        ParticleMovePattern.setGlobalEnabledPattern(GatherMovePattern.defaultPattern);
+        MovePattern.setGlobalEnabledPattern(GatherMovePattern.defaultPattern);
 
         println("Done setup");
         println("----");
@@ -53,31 +56,41 @@ public class Sketch extends PApplet {
 
     @Override
     public void draw() {
-//        noStroke();
-//        fill(255, 50);
-//        rect(0, 0, width, height);
         background(255);
         for (Swarm s: swarms) {
             s.update();
         }
 
+        particleLayer.beginDraw();
+        particleLayer.noStroke();
+        particleLayer.fill(255, 50);
+        particleLayer.rect(0, 0, width, height);
+
+        swarmLayer.beginDraw();
+        swarmLayer.clear();
+
         for (Swarm s: swarms) {
             s.render();
         }
+
+        swarmLayer.endDraw();
+        particleLayer.endDraw();
         t += 0.01f;
         surface.setTitle("Framerate: " + frameRate);
+
+        MovePattern.getGlobalEnabledPattern().renderLayers();
     }
 
     @Override
     public void mousePressed() {
         if (state == State.Gather) {
-            ParticleMovePattern.setGlobalEnabledPattern(FishFollowMovePattern.defaultPattern);
+            MovePattern.setGlobalEnabledPattern(FishFollowMovePattern.defaultPattern);
             state = State.Fish;
         } else if (state == State.Fish) {
-            ParticleMovePattern.setGlobalEnabledPattern(LogoMovePattern.defaultPattern);
+            MovePattern.setGlobalEnabledPattern(LogoMovePattern.defaultPattern);
             state = State.Logo;
         } else {
-            ParticleMovePattern.setGlobalEnabledPattern(GatherMovePattern.defaultPattern);
+            MovePattern.setGlobalEnabledPattern(GatherMovePattern.defaultPattern);
             state = State.Gather;
         }
     }
@@ -85,6 +98,11 @@ public class Sketch extends PApplet {
     private void loadLogo() {
         println("Loading Logos");
         logo = loadImage("data/logo.png");
+    }
+
+    private void createLayers() {
+        particleLayer = createGraphics(width, height);
+        swarmLayer = createGraphics(width, height);
     }
 
     private void createParticlesAndSwarms() {
@@ -129,6 +147,7 @@ public class Sketch extends PApplet {
             p.id = particleGlobalId;
             p.rootPos.set(xRoot, yRoot);
             p.loc.set(xRoot, yRoot);
+            p.pLoc.set(p.loc);
             p.defaultColor = colorHit;
             p.noiseSeed = (float) p.id / 300;
 
@@ -145,7 +164,7 @@ public class Sketch extends PApplet {
 
     void relocateSwarms() {
         for (Swarm s: swarms) {
-            s.loc.set(width / 2, height / 2);
+            s.relocCenter();
             s.velocity.set(PVector.random2D().limit(0.1f));
             s.trace.clear();
         }
@@ -155,12 +174,12 @@ public class Sketch extends PApplet {
         return t;
     }
 
-    public PImage getLogo() {
-        return logo;
+    PGraphics getSwarmLayer() {
+        return swarmLayer;
     }
 
-    public State getState() {
-        return state;
+    PGraphics getParticleLayer() {
+        return particleLayer;
     }
 
     public static Sketch getSK() {

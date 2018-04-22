@@ -1,7 +1,7 @@
 import processing.core.PVector;
 
 public class Movable {
-    PVector loc;
+    PVector loc, pLoc;
     PVector velocity;
     PVector acce;
     PVector force;
@@ -25,6 +25,7 @@ public class Movable {
         this.noiseSeed = Sketch.getSK().random(0, 1000);
 
         this.loc = new PVector();
+        this.pLoc = new PVector();
         this.velocity = new PVector();
         this.acce = new PVector();
         this.force = new PVector();
@@ -41,12 +42,39 @@ public class Movable {
 
     void applyNewtonForce() {
         velocity.add(acce);
-        loc.add(velocity);
+        updateLoc();
     }
 
     boolean outOfScreen() {
         Sketch sk = Sketch.getSK();
         return loc.x < - boundaryGap || loc.x > sk.width + boundaryGap ||
                 loc.y < - boundaryGap || loc.y > sk.height + boundaryGap;
+    }
+
+    void reloc() {
+        Sketch sk = Sketch.getSK();
+        loc.set(sk.random(sk.width), sk.random(sk.height));
+        pLoc.set(loc);
+    }
+
+    void relocCenter() {
+        Sketch sk = Sketch.getSK();
+        loc.set(sk.width / 2, sk.height / 2);
+        pLoc.set(loc);
+    }
+
+    void updateLoc(PVector l) {
+        pLoc.set(loc);
+        loc.set(l);
+    }
+
+    void updateLoc(float x, float y) {
+        pLoc.set(loc);
+        loc.set(x, y);
+    }
+
+    void updateLoc() {
+        pLoc.set(loc);
+        loc.add(velocity);
     }
 }

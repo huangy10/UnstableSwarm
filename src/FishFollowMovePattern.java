@@ -1,6 +1,6 @@
 import processing.core.PVector;
 
-public class FishFollowMovePattern extends ParticleMovePattern {
+public class FishFollowMovePattern extends MovePattern {
     static final FishFollowMovePattern defaultPattern = new FishFollowMovePattern();
 
     private static final float ATTRACTION = 0.05f;
@@ -13,7 +13,7 @@ public class FishFollowMovePattern extends ParticleMovePattern {
     void update(Particle p) {
         //
         if (p.outOfScreen()) {
-            p.loc.set(sk.random(sk.width), sk.random(sk.height));
+            p.reloc();
         }
         p.acce.set(0, 0);
         applyClusterLeaderAttraction(p, false);
@@ -30,7 +30,7 @@ public class FishFollowMovePattern extends ParticleMovePattern {
     @Override
     void update(Swarm s) {
         if (s.outOfScreen()) {
-            s.loc.set(sk.random(sk.width), sk.random(sk.height));
+            s.reloc();
             s.trace.clear();
         }
         s.updateTrace();
@@ -97,7 +97,7 @@ public class FishFollowMovePattern extends ParticleMovePattern {
             if (dist < clusterLead.clusterAttractionRange / 2) {
                 return;
             }
-            PVector gForce = d.mult(ATTRACTION * clusterLead.mass * p.mass / dist / dist * 2);
+            PVector gForce = d.mult(ATTRACTION * clusterLead.mass * p.mass / dist / dist * 3);
             p.acce.add(gForce);
         }
     }
