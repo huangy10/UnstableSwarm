@@ -18,6 +18,9 @@ public class MovePattern {
     int defaultBgColor = 0xffffff;
     int bgColor = 0xffffff;
     int pBgColor = 0xffffff;
+    int curBgColor = 0xffffff;
+
+    int lastEnabledAtFC = 0;
 
     MovePattern() {
         sk = Sketch.getSK();
@@ -56,15 +59,13 @@ public class MovePattern {
     void update(Swarm s) {
     }
 
-    void render() {
-        int fillColor = getBgColor();
-        Sketch.println(fillColor, defaultBgColor);
-        sk.background(fillColor);
+    void preRender() {
+        curBgColor = getBgColor();
+        sk.background(curBgColor);
         PGraphics particleLayer = sk.getParticleLayer();
         particleLayer.beginDraw();
         particleLayer.noStroke();
-        particleLayer.fill((fillColor & 0x00ffffff ) | (50 << 24));
-//        particleLayer.fill(255, 50);
+        particleLayer.fill((curBgColor & 0x00ffffff ) | (50 << 24));
         particleLayer.rect(0, 0, sk.width, sk.height);
 
         PGraphics swarmLayer = sk.getSwarmLayer();
@@ -103,7 +104,7 @@ public class MovePattern {
                 // switch color
                 p.pColor = p.color;
                 int[] colorPlate = sk.colorPlate[activatedColorPlateIdx];
-                p.color = colorPlate[(int) sk.random(colorPlate.length - 1) + 1];
+                p.color = colorPlate[(int) sk.random(colorPlate.length)];
                 strokeColor = p.pColor;
             } else {
                 float lerp = (float) (sk.frameCount - switchColorBeginFC) / (float) switchColorSpeed;
@@ -156,6 +157,7 @@ public class MovePattern {
     }
 
     void patternIsEnabled() {
+        lastEnabledAtFC = sk.frameCount;
         if (enableColorEasyIn) {
             switchColorBeginFC = sk.frameCount + 1;
         }

@@ -47,13 +47,23 @@ public class Swarm extends Movable {
         updateLoc(p.loc);
         velocity.set(PVector.random2D().limit(0.1f));
         if (!isClusterLeader) {
-            color = p.defaultColor;
-            stopColor = sk.color(
-                    sk.red(p.defaultColor),
-                    sk.green(p.defaultColor),
-                    sk.blue(p.defaultColor),
-                    sk.alpha(p.defaultColor) / 3);
+            configColorFromParticle(p);
         }
+    }
+
+    void configColorFromParticle() {
+        int idx = (int) sk.random(size);
+        Particle p = particles[idx];
+        configColorFromParticle(p);
+    }
+
+    void configColorFromParticle(Particle p) {
+        color = p.color;
+        stopColor = sk.color(
+                sk.red(p.defaultColor),
+                sk.green(p.defaultColor),
+                sk.blue(p.defaultColor),
+                sk.alpha(p.defaultColor) / 3);
     }
 
     @Override
@@ -123,6 +133,14 @@ public class Swarm extends Movable {
             }
         } else {
             trace.offerFirst(loc.copy());
+        }
+    }
+
+    @Override
+    void moveLoc(float x, float y) {
+        super.moveLoc(x, y);
+        for (PVector p: trace) {
+            p.add(x, y);
         }
     }
 }

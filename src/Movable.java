@@ -78,4 +78,9 @@ public class Movable {
         pLoc.set(loc);
         loc.add(velocity);
     }
+
+    void moveLoc(float x, float y) {
+        pLoc.add(x, y);
+        loc.add(x, y);
+    }
 }

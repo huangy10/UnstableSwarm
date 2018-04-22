@@ -6,7 +6,7 @@ public class FishFollowMovePattern extends MovePattern {
     private static final float ATTRACTION = 0.05f;
     private static final float DAMPING = 0.05f;
     private static final float PERLIN_STRENGTH = 1.5f;
-    private static final float BOUNDARY_AVOID_RANGE = 30;
+    private static final float BOUNDARY_AVOID_RANGE = -30;
     private static final float BOUNDARY_AVOID_STRENGTH = 0.5f;
 
     FishFollowMovePattern() {
@@ -50,6 +50,14 @@ public class FishFollowMovePattern extends MovePattern {
         s.applyNewtonForce();
     }
 
+    @Override
+    void render(Swarm s) {
+        if (enableColorTransition && doSwithcColor && !s.isClusterLeader) {
+            s.configColorFromParticle();
+        }
+        super.render(s);
+    }
+
     void swim(Swarm s) {
         float swimForce;
         if (s.pulseCounter == 0)
@@ -65,15 +73,19 @@ public class FishFollowMovePattern extends MovePattern {
 
     void applyBoundaryAvoidance(Movable m) {
         if (m.loc.x < BOUNDARY_AVOID_RANGE) {
-            m.acce.add(BOUNDARY_AVOID_STRENGTH, 0);
+//            m.acce.add(BOUNDARY_AVOID_STRENGTH, 0);
+            m.moveLoc(sk.width - BOUNDARY_AVOID_RANGE, 0);
         } else if (m.loc.x > sk.width - BOUNDARY_AVOID_RANGE) {
-            m.acce.add(- BOUNDARY_AVOID_STRENGTH, 0);
+//            m.acce.add(- BOUNDARY_AVOID_STRENGTH, 0);
+            m.moveLoc(-sk.width + BOUNDARY_AVOID_RANGE, 0);
         }
 
         if (m.loc.y < BOUNDARY_AVOID_RANGE) {
-            m.acce.add(0, BOUNDARY_AVOID_STRENGTH);
+//            m.acce.add(0, BOUNDARY_AVOID_STRENGTH);
+            m.moveLoc(0, sk.height - BOUNDARY_AVOID_RANGE);
         } else if (m.loc.y > sk.height - BOUNDARY_AVOID_RANGE) {
-            m.acce.add(0, -BOUNDARY_AVOID_STRENGTH);
+//            m.acce.add(0, -BOUNDARY_AVOID_STRENGTH);
+            m.moveLoc(0, -sk.height + BOUNDARY_AVOID_RANGE);
         }
     }
 
@@ -139,6 +151,7 @@ public class FishFollowMovePattern extends MovePattern {
 
     @Override
     void patternIsEnabled() {
+        super.patternIsEnabled();
         sk.relocateSwarms();
         switchColorBeginFC = sk.frameCount - 1;
     }
