@@ -53,7 +53,6 @@ public class Swarm extends Movable {
             p.update();
         }
         if (enabled) {
-//            updateSwim();
             ParticleMovePattern.getGlobalEnabledPattern().update(this);
         }
 
@@ -66,8 +65,17 @@ public class Swarm extends Movable {
         }
 
         if (enabled) {
-//            renderSwarm();
             ParticleMovePattern.getGlobalEnabledPattern().render(this);
+        }
+    }
+
+    @Override
+    void applyNewtonForce() {
+        if (maxSpeed == 0) {
+            super.applyNewtonForce();
+        } else {
+            velocity.add(acce).limit(maxSpeed);
+            loc.add(velocity);
         }
     }
 
@@ -91,11 +99,23 @@ public class Swarm extends Movable {
         }
     }
 
-    public void setAsAttractionHeader() {
+    void setAsAttractionHeader() {
         isClusterLeader = true;
         color = sk.color(255, 0, 0, 100);
         stopColor = sk.color(100, 0, 0);
         mass = 20f;
         clusterLeaders.add(this);
+    }
+
+    void updateTrace() {
+        if (trace.size() > traceSizeLimit) {
+            PVector p = trace.pollLast();
+            if (p != null) {
+                p.set(loc);
+                trace.offerFirst(p);
+            }
+        } else {
+            trace.offerFirst(loc.copy());
+        }
     }
 }

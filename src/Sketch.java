@@ -1,4 +1,5 @@
 import processing.core.PApplet;
+import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PVector;
 
@@ -71,6 +72,9 @@ public class Sketch extends PApplet {
     public void mousePressed() {
         if (state == State.Gather) {
             ParticleMovePattern.setGlobalEnabledPattern(FishFollowMovePattern.defaultPattern);
+            state = State.Fish;
+        } else if (state == State.Fish) {
+            ParticleMovePattern.setGlobalEnabledPattern(LogoMovePattern.defaultPattern);
             state = State.Logo;
         } else {
             ParticleMovePattern.setGlobalEnabledPattern(GatherMovePattern.defaultPattern);

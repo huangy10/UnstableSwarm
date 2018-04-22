@@ -5,6 +5,11 @@ public class GatherMovePattern extends ParticleMovePattern {
     PVector gravityCenter;
     float gravityStrength = 0.3f;
 
+    GatherMovePattern() {
+        super();
+        enableRender = false;
+    }
+
     @Override
     void update(Particle p) {
         computeForce(p);
@@ -17,7 +22,7 @@ public class GatherMovePattern extends ParticleMovePattern {
 
     @Override
     void render(Swarm s) {
-
+        if (enableRender) super.render(s);
     }
 
     void computeForce(Particle p) {
@@ -28,9 +33,8 @@ public class GatherMovePattern extends ParticleMovePattern {
 
     void applyForce(Particle p) {
         computeFriction(p);
-        PVector a = PVector.add(p.force, p.friction).div(p.mass);
-        p.velocity.add(a);
-        p.loc.add(p.velocity);
+        p.acce.set(PVector.add(p.force, p.friction).div(p.mass));
+        p.applyNewtonForce();
         if (Particle.enableGravity) {
             applyGravity(p);
         }

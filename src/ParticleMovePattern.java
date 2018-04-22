@@ -5,6 +5,7 @@ public class ParticleMovePattern {
 
     private static ParticleMovePattern globalEnabledPattern;
     Sketch sk;
+    boolean enableRender = true;
 
     ParticleMovePattern() {
         sk = Sketch.getSK();
@@ -37,7 +38,7 @@ public class ParticleMovePattern {
     }
 
     void render(Swarm s) {
-        if (s.trace.isEmpty()) {
+        if (!enableRender || s.trace.isEmpty()) {
             return;
         }
 

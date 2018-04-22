@@ -15,6 +15,8 @@ public class Movable {
     static boolean enableGravity = false;
     static float boundaryGap = 100;
 
+    float cachedProperty;
+
     // Movable should always has an id
     Movable(int id) {
         this.id = id;
@@ -35,6 +37,11 @@ public class Movable {
 
     void render() {
 
+    }
+
+    void applyNewtonForce() {
+        velocity.add(acce);
+        loc.add(velocity);
     }
 
     boolean outOfScreen() {

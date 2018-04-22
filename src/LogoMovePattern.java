@@ -7,6 +7,7 @@ public class LogoMovePattern extends GatherMovePattern {
     LogoMovePattern() {
         super();
         gravityStrength = 1f;
+        enableRender = true;
     }
 
     @Override
@@ -34,6 +35,35 @@ public class LogoMovePattern extends GatherMovePattern {
                 forceStrength = Math.max(p.frictionAcc * 15 * distance / 20, 1f);
             }
             p.force.set(dir.setMag(forceStrength));
+        }
+    }
+
+    @Override
+    void update(Swarm s) {
+        // Gather swarms into gravity Center
+        PVector d = PVector.sub(gravityCenter, s.loc);
+        float distance = d.mag();
+        float forceStrength;
+
+        s.updateTrace();
+
+        if (distance > 20) {
+            forceStrength = 0.2f;
+        } else {
+            forceStrength = Math.max(0.2f * distance / 20, 1f);
+        }
+
+        s.force.set(d.setMag(forceStrength * s.mass * 10));
+        s.acce.set(s.force).div(s.mass);
+        s.cachedProperty = distance;
+        s.applyNewtonForce();
+    }
+
+    @Override
+    void render(Swarm s) {
+        float distance = s.cachedProperty;
+        if (distance > 50) {
+            super.render(s);
         }
     }
 }

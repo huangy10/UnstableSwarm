@@ -32,7 +32,7 @@ public class FishFollowMovePattern extends ParticleMovePattern {
             s.loc.set(sk.random(sk.width), sk.random(sk.height));
             s.trace.clear();
         }
-        updateTrace(s);
+        s.updateTrace();
         s.acce.set(0, 0);
         applyClusterLeaderAttraction(s);
         applyDamping(s);
@@ -110,18 +110,6 @@ public class FishFollowMovePattern extends ParticleMovePattern {
                 PVector gForce = d.mult(ATTRACTION * clusterLead.mass * s.mass / dist / dist);
                 s.acce.add(gForce);
             }
-        }
-    }
-
-    void updateTrace(Swarm s) {
-        if (s.trace.size() > s.traceSizeLimit) {
-            PVector p = s.trace.pollLast();
-            if (p != null) {
-                p.set(s.loc);
-                s.trace.offerFirst(p);
-            }
-        } else {
-            s.trace.offerFirst(s.loc.copy());
         }
     }
 
