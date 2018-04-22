@@ -13,7 +13,8 @@ public class Movable {
     int id;
 
     static boolean enableGravity = false;
-    static float boundaryGap = 100;
+    static float boundaryGap = 500;
+    int pulseCounter = 0;
 
     float cachedProperty;
 

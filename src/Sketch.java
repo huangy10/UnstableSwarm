@@ -29,6 +29,14 @@ public class Sketch extends PApplet {
     private PGraphics swarmLayer;
     private PGraphics particleLayer;
 
+    String[] colorPlateString = {
+            "-1117720,-13683658,-8410437,-9998215,-1849945,-5517090,-4250587,-14178341,-5804972,-3498634",
+            "-67879,-9633503,-8858441,-144382,-4996094,-16604779,-588031",
+            "-16711663,-13888933,-9029017,-5213092,-1787063,-11375744,-2167516,-15713402,-5389468,-2064585"
+    };
+    int[][] colorPlate;
+    int colorPlateNum;
+
     @Override
     public void settings() {
         if (Sketch.sk == null)
@@ -39,6 +47,7 @@ public class Sketch extends PApplet {
     @Override
     public void setup() {
         loadLogo();
+        loadColorPlate();
         GatherMovePattern.defaultPattern.gravityCenter = new PVector(width / 2, height / 2);
         LogoMovePattern.defaultPattern.gravityCenter = new PVector(width / 2, height / 2);
 
@@ -57,6 +66,7 @@ public class Sketch extends PApplet {
     @Override
     public void draw() {
         background(255);
+        MovePattern.getGlobalEnabledPattern().update();
         for (Swarm s: swarms) {
             s.update();
         }
@@ -98,6 +108,18 @@ public class Sketch extends PApplet {
     private void loadLogo() {
         println("Loading Logos");
         logo = loadImage("data/logo.png");
+    }
+
+    private void loadColorPlate() {
+        colorPlateNum = colorPlateString.length;
+        colorPlate = new int[colorPlateNum][];
+        for (int i = 0; i < colorPlateNum; i += 1) {
+            String[] colorStrings = colorPlateString[i].split(",");
+            colorPlate[i] = new int[colorStrings.length];
+            for (int j = 0; j < colorStrings.length; j += 1) {
+                colorPlate[i][j] = Integer.parseInt(colorStrings[j]);
+            }
+        }
     }
 
     private void createLayers() {

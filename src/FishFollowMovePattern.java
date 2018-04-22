@@ -9,6 +9,11 @@ public class FishFollowMovePattern extends MovePattern {
     private static final float BOUNDARY_AVOID_RANGE = 30;
     private static final float BOUNDARY_AVOID_STRENGTH = 0.5f;
 
+    FishFollowMovePattern() {
+        super();
+        enableColorTransition = true;
+    }
+
     @Override
     void update(Particle p) {
         //
@@ -16,11 +21,10 @@ public class FishFollowMovePattern extends MovePattern {
             p.reloc();
         }
         p.acce.set(0, 0);
-        applyClusterLeaderAttraction(p, false);
+        applyClusterLeaderAttraction(p, true);
         applyDamping(p);
         applyPerlinEngine(p);
         applyBoundaryAvoidance(p);
-
         swim(p);
 
 //        p.velocity.mult(sk.random(0.9f, 1.0f));
@@ -33,6 +37,7 @@ public class FishFollowMovePattern extends MovePattern {
             s.reloc();
             s.trace.clear();
         }
+        pulse(s);
         s.updateTrace();
         s.acce.set(0, 0);
         applyClusterLeaderAttraction(s);
@@ -45,12 +50,16 @@ public class FishFollowMovePattern extends MovePattern {
     }
 
     void swim(Swarm s) {
-        float swimForce = s.isClusterLeader ? 0.4f * sk.perlinNoiseWithSeed(s.noiseSeed) : 0.2f;
+        float swimForce;
+        if (s.pulseCounter == 0)
+            swimForce = s.isClusterLeader ? 0.4f * sk.perlinNoiseWithSeed(s.noiseSeed) : 0.2f;
+        else
+            swimForce = 0.6f;
         s.acce.add(s.velocity.copy().setMag(swimForce));
     }
 
     void swim(Particle p) {
-        p.acce.add(p.velocity.copy().setMag(0.2f));
+        p.acce.add(p.velocity.copy().setMag(p.pulseCounter > 0 ? 0.4f : 0.2f));
     }
 
     void applyBoundaryAvoidance(Movable m) {
@@ -84,10 +93,10 @@ public class FishFollowMovePattern extends MovePattern {
             for (Swarm clusterLead : p.swarm.clusterLeaders) {
                 PVector d = PVector.sub(clusterLead.loc, p.loc);
                 float dist = d.mag();
-                if (dist < clusterLead.clusterAttractionRange) {
+                if (dist < clusterLead.clusterAttractionRange / 2) {
                     continue;
                 }
-                PVector gForce = d.mult(ATTRACTION * clusterLead.mass * p.mass / dist / dist * 2);
+                PVector gForce = d.mult(ATTRACTION * clusterLead.mass * p.mass / dist / dist * 3);
                 p.acce.add(gForce);
             }
         } else {
@@ -116,8 +125,20 @@ public class FishFollowMovePattern extends MovePattern {
         }
     }
 
+    void pulse(Swarm s) {
+        if (!s.isClusterLeader) return;
+        if (s.pulseCounter > 0) {
+            s.pulseCounter -= 1;
+        } else {
+            if (sk.random(1) < 0.01f) {
+                s.pulseCounter = (int) sk.frameRate;
+            }
+        }
+    }
+
     @Override
     void patternIsEnabled() {
         sk.relocateSwarms();
+        switchColorBeginFC = sk.frameCount - 1;
     }
 }

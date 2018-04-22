@@ -46,12 +46,14 @@ public class Swarm extends Movable {
         Particle p = particles[idx];
         updateLoc(p.loc);
         velocity.set(PVector.random2D().limit(0.1f));
-        color = p.defaultColor;
-        stopColor = sk.color(
-                sk.red(p.defaultColor),
-                sk.green(p.defaultColor),
-                sk.blue(p.defaultColor),
-                sk.alpha(p.defaultColor) / 3);
+        if (!isClusterLeader) {
+            color = p.defaultColor;
+            stopColor = sk.color(
+                    sk.red(p.defaultColor),
+                    sk.green(p.defaultColor),
+                    sk.blue(p.defaultColor),
+                    sk.alpha(p.defaultColor) / 3);
+        }
     }
 
     @Override

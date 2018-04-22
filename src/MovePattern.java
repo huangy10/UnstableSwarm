@@ -6,6 +6,12 @@ public class MovePattern {
     private static MovePattern globalEnabledPattern;
     Sketch sk;
     boolean enableRender = true;
+    boolean enableColorTransition = false;
+    int activatedColorPlateIdx = -1;
+    int switchColorInterval = 300;
+    int switchColorSpeed = 30;
+    int switchColorBeginFC = 0;
+    boolean doSwithcColor = false;
 
     MovePattern() {
         sk = Sketch.getSK();
@@ -25,6 +31,19 @@ public class MovePattern {
         MovePattern.globalEnabledPattern = globalEnabledPattern;
     }
 
+    void update() {
+        // update the move pattern it self
+        if (enableColorTransition) {
+            if (sk.frameCount - switchColorBeginFC >= switchColorInterval) {
+                doSwithcColor = true;
+                activatedColorPlateIdx = (int)sk.random(sk.colorPlate.length);
+                switchColorBeginFC = sk.frameCount;
+            } else {
+                doSwithcColor = false;
+            }
+        }
+    }
+
     void update(Particle p) {
     }
 
@@ -33,10 +52,24 @@ public class MovePattern {
 
     void render(Particle p) {
         PGraphics pg = sk.getParticleLayer();
-        pg.stroke(p.defaultColor);
+        int strokeColor = p.defaultColor;
+        if (enableColorTransition) {
+            if (doSwithcColor) {
+                // switch color
+                p.pColor = p.color;
+                int[] colorPlate = sk.colorPlate[activatedColorPlateIdx];
+                p.color = colorPlate[(int) sk.random(colorPlate.length)];
+                strokeColor = p.pColor;
+            } else {
+                float lerp = (sk.frameCount - switchColorBeginFC) / (float) switchColorSpeed;
+                strokeColor = lerp > 1 ? p.color : sk.lerpColor(p.pColor, p.color, lerp);
+            }
+        } else {
+            p.color = p.defaultColor;
+        }
+        pg.stroke(strokeColor);
         pg.noFill();
         pg.strokeWeight(2);
-//        pg.ellipse(p.loc.x, p.loc.y, 2, 2);
         pg.line(p.loc.x, p.loc.y, p.pLoc.x, p.pLoc.y);
     }
 
@@ -73,6 +106,6 @@ public class MovePattern {
     }
 
     void patternIsDisabled() {
-
+        doSwithcColor = false;
     }
 }
