@@ -14,7 +14,7 @@ public class Swarm extends Movable {
 
     LinkedList<PVector> trace;
     int traceSizeLimit = 5;
-    float maxSpeed;
+
     List<Swarm> clusterLeaders;
 
     private Sketch sk;
@@ -85,16 +85,6 @@ public class Swarm extends Movable {
 
         if (enabled) {
             MovePattern.getGlobalEnabledPattern().render(this);
-        }
-    }
-
-    @Override
-    void applyNewtonForce() {
-        if (maxSpeed == 0) {
-            super.applyNewtonForce();
-        } else {
-            velocity.add(acce).limit(maxSpeed);
-            updateLoc();
         }
     }
 

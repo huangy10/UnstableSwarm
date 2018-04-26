@@ -88,14 +88,14 @@ public class Sketch extends PApplet {
     @Override
     public void mousePressed() {
         if (state == State.Gather) {
-            MovePattern.setGlobalEnabledPattern(LogoMovePattern.defaultPattern);
-            state = State.Logo;
-        } else if (state == State.Fish) {
-            MovePattern.setGlobalEnabledPattern(GatherMovePattern.defaultPattern);
-            state = State.Gather;
-        } else {
             MovePattern.setGlobalEnabledPattern(FishFollowMovePattern.defaultPattern);
             state = State.Fish;
+        } else if (state == State.Fish) {
+            MovePattern.setGlobalEnabledPattern(LogoMovePattern.defaultPattern);
+            state = State.Logo;
+        } else {
+            MovePattern.setGlobalEnabledPattern(GatherMovePattern.defaultPattern);
+            state = State.Gather;
         }
     }
 

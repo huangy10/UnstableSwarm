@@ -11,6 +11,7 @@ public class Movable {
     float frictionAcc;
     float noiseSeed;
     int id;
+    float maxSpeed;
 
     static boolean enableGravity = false;
     static float boundaryGap = 500;
@@ -31,6 +32,7 @@ public class Movable {
         this.acce = new PVector();
         this.force = new PVector();
         this.friction = new PVector();
+        this.maxSpeed = Sketch.getSK().random(10, 15);;
     }
 
     void update() {
@@ -42,7 +44,11 @@ public class Movable {
     }
 
     void applyNewtonForce() {
-        velocity.add(acce);
+        if (maxSpeed == 0) {
+            velocity.add(acce);
+        } else {
+            velocity.add(acce).limit(maxSpeed);
+        }
         updateLoc();
     }
 
