@@ -43,8 +43,8 @@ public class Sketch extends PApplet {
     public void settings() {
         if (Sketch.sk == null)
             Sketch.sk = this;
-        size(1280, 720);
-//        fullScreen();
+//        size(1280, 720);
+        fullScreen();
     }
 
     @Override
@@ -90,23 +90,22 @@ public class Sketch extends PApplet {
 
         MovePattern.getGlobalEnabledPattern().renderLayers();
 
-        BodyMovePattern.defaultPattern.kinect.debugRender();
+//        BodyMovePattern.defaultPattern.kinect.debugRender();
         BodyMovePattern.defaultPattern.kinect.poly.drawPolygon();
+
+        MovePattern.getGlobalEnabledPattern().stateAutoSwitch();
     }
 
     @Override
     public void mousePressed() {
+        switchToNRandomonkinectState();
+    }
+
+    public void switchToNRandomonkinectState() {
         int idx = (int) random(0, 3);
         MovePattern[] patterns = {FishFollowMovePattern.defaultPattern, LogoMovePattern.defaultPattern,
                 GatherMovePattern.defaultPattern};
         MovePattern.setGlobalEnabledPattern(patterns[idx]);
-//        if (state == State.Gather) {
-//            MovePattern.setGlobalEnabledPattern(FishFollowMovePattern.defaultPattern);
-//        } else if (state == State.Fish) {
-//            MovePattern.setGlobalEnabledPattern(LogoMovePattern.defaultPattern);
-//        } else {
-//            MovePattern.setGlobalEnabledPattern(GatherMovePattern.defaultPattern);
-//        }
     }
 
     private void loadLogo() {

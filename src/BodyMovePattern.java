@@ -16,6 +16,8 @@ public class BodyMovePattern extends GatherMovePattern {
         super();
         enableColorTransition = true;
         enableColorEasyIn = false;
+        leastEnableInterval = 30 * 10;
+        mostEnableDuration = 30 * 10;
     }
 
     void configure() {
@@ -23,6 +25,17 @@ public class BodyMovePattern extends GatherMovePattern {
             kinect = new KinectWrapper(Sketch.getSK(), this);
             kinect.configureKinect();
         }
+    }
+
+
+    @Override
+    protected boolean canBeDisabled() {
+        return sk.frameCount - lastEnabledAtFC > leastEnableDuration;
+    }
+
+    @Override
+    protected boolean canBeEnabled() {
+        return sk.frameCount - lastDisabledAtFC > leastEnableInterval;
     }
 
     @Override

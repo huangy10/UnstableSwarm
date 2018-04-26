@@ -20,7 +20,12 @@ public class MovePattern {
     int pBgColor = 0xffffff;
     int curBgColor = 0xffffff;
 
+    int leastEnableInterval = 0;
+    int mostEnableDuration = 30 * 10;
+    int leastEnableDuration = 30 * 5;
+
     int lastEnabledAtFC = 0;
+    int lastDisabledAtFC = 0;
 
     private boolean globallyEnabled = false;
 
@@ -32,7 +37,10 @@ public class MovePattern {
         return globalEnabledPattern;
     }
 
-    static void setGlobalEnabledPattern(MovePattern globalEnabledPattern) {
+    static boolean setGlobalEnabledPattern(MovePattern globalEnabledPattern) {
+        if (!globalEnabledPattern.canBeEnabled() ||
+                (MovePattern.globalEnabledPattern != null && !MovePattern.globalEnabledPattern.canBeDisabled()))
+            return false;
         if(!globalEnabledPattern.equals(MovePattern.globalEnabledPattern)) {
             Sketch.getSK().state = globalEnabledPattern.getState();
             globalEnabledPattern.patternIsEnabled();
@@ -41,6 +49,15 @@ public class MovePattern {
         }
 
         MovePattern.globalEnabledPattern = globalEnabledPattern;
+        return true;
+    }
+
+    protected boolean canBeDisabled() {
+        return true;
+    }
+
+    protected boolean canBeEnabled() {
+        return true;
     }
 
     void update() {
@@ -60,6 +77,12 @@ public class MovePattern {
     }
 
     void update(Swarm s) {
+    }
+
+    void stateAutoSwitch() {
+        if (mostEnableDuration > 0 && sk.frameCount - lastEnabledAtFC > mostEnableDuration) {
+            sk.switchToNRandomonkinectState();
+        }
     }
 
     void preRender() {
@@ -170,6 +193,7 @@ public class MovePattern {
     void patternIsDisabled() {
         globallyEnabled = false;
         doSwithcColor = false;
+        lastEnabledAtFC = sk.frameCount;
     }
 
     Sketch.State getState() {

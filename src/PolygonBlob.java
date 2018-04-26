@@ -188,7 +188,7 @@ class PolygonBlob extends Polygon {
         for (int i = 0; i < npoints; i += 1) {
             sk.vertex(xpoints[i], ypoints[i]);
         }
-        sk.endShape(sk.CLOSE);
+        sk.endShape();
         sk.popMatrix();
     }
 
