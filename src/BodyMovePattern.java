@@ -1,13 +1,14 @@
 import SimpleOpenNI.SimpleOpenNI;
 import processing.core.PVector;
 
-public class BodyMovePattern extends MovePattern {
+public class BodyMovePattern extends GatherMovePattern {
 
     static final BodyMovePattern defaultPattern = new BodyMovePattern();
     private static final float BOUNDARY_AVOID_RANGE = -30;
 
     KinectWrapper kinect;
     boolean doUpdateGoal = false;
+    boolean doCapture = false;
     int goalUpdateRate = 5;
     boolean enableDebug = true;
 
@@ -27,6 +28,7 @@ public class BodyMovePattern extends MovePattern {
     @Override
     void update() {
         doUpdateGoal = sk.frameCount % goalUpdateRate == 0;
+        doCapture = sk.frameCount - lastEnabledAtFC > 150;
         super.update();
     }
 
@@ -43,7 +45,24 @@ public class BodyMovePattern extends MovePattern {
     void update(Particle p) {
         applyBoundaryAcross(p);
         updateGoal(p, p.goalPos);
-        runToGoal(p, p.goalPos);
+        if(kinect.poly.contains(p.loc)) {
+            super.update(p);
+        } else {
+            if (doCapture) {
+                float x, y;
+                int tries = 0;
+                do {
+                    x = sk.random(KinectWrapper.kinectWidth);
+                    y = sk.random(KinectWrapper.kinectHeight);
+                    tries += 1;
+                    if (tries > 10) break;
+                } while (!kinect.poly.contains(x, y));
+                kinect.poly.coordConvertToScreen(x, y, p.loc);
+                p.pLoc.set(p.loc);
+            } else {
+                runToGoal(p, p.goalPos);
+            }
+        }
     }
 
     @Override
@@ -70,30 +89,43 @@ public class BodyMovePattern extends MovePattern {
         }
     }
 
-    protected void updateGoal(Movable m, PVector goal) {
+    protected boolean updateGoal(Movable m, PVector goal) {
         if (!doUpdateGoal
                 || kinect.poly.npoints == 0
                 || kinect.poly.contains(m.loc)
                 || kinect.poly.contains(goal)) {
-            return;
+            return false;
         }
         float x, y;
+        int tries = 0;
         do {
             x = sk.random(KinectWrapper.kinectWidth);
             y = sk.random(KinectWrapper.kinectHeight);
+            tries += 1;
+            if (tries > 10) break;
         } while (!kinect.poly.contains(x, y));
         kinect.poly.coordConvertToScreen(x, y, goal);
+        return true;
     }
 
     protected void runToGoal(Movable m, PVector goal) {
         PVector d = PVector.sub(goal, m.loc);
-        d.limit(m.maxSpeed);
+        d.limit(m.maxSpeed * 2);
         m.pLoc.set(m.loc);
         m.loc.add(d);
     }
 
-    protected void randomFlow(Movable m) {
+    @Override
+    void computeForce(Particle p) {
+        float forceDir = sk.perlinNoiseWithSeed(p.noiseSeed / 100) * sk.PI * 6;
+        float forceStrength = p.frictionAcc * 16;
+        p.force.set(forceStrength * Sketch.cos(forceDir), forceStrength * Sketch.sin(forceDir));
+        p.force.add(kinect.bodyMove.limit(p.frictionAcc * 32));
+    }
 
+    @Override
+    void applyGravity(Particle p) {
+        // cancel gravity
     }
 
     void onNewUser(SimpleOpenNI curContext, int userId) {
@@ -109,7 +141,10 @@ public class BodyMovePattern extends MovePattern {
             MovePattern.setGlobalEnabledPattern(this);
             Sketch.println("Activate");
         } else if (preId >= 0 && curId == -1) {
-            Sketch.println("Deactivate");
+//            Sketch.println("Deactivate");
+            MovePattern.setGlobalEnabledPattern(
+                    LogoMovePattern.defaultPattern
+            );
         }
     }
 }

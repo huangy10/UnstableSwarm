@@ -10,6 +10,10 @@ public class KinectWrapper {
     private BlobDetection blobDetection;
     private int currentTrackingUserId = -1;
     private int startTrackingFC = 0;
+    PVector bodyMove;
+    private PVector bodyPos;
+    boolean validBodyMove;
+
     private float scale;
     static float kinectWidth = 640f;
     static float kinectHeight = 480f;
@@ -26,6 +30,9 @@ public class KinectWrapper {
         sk = Sketch.getSK();
         poly = new PolygonBlob(this);
         bodyMovePattern = pattern;
+        bodyMove = new PVector();
+        bodyPos = new PVector();
+        validBodyMove = false;
     }
 
     boolean configureKinect() {
@@ -80,6 +87,20 @@ public class KinectWrapper {
             blobDetection.computeBlobs(blobProcessImage.pixels);
             poly.reset();
             poly.createPolygon();
+
+            if(currentTrackingUserId >= 0) {
+                PVector com = new PVector();
+                if (context.getCoM(currentTrackingUserId, com)) {
+                    if (validBodyMove) {
+                        bodyMove = PVector.sub(com, bodyPos);
+                    } else {
+                        validBodyMove = true;
+                        bodyPos.set(com);
+                    }
+                } else {
+                    validBodyMove = false;
+                }
+            }
         }
     }
 
@@ -91,6 +112,7 @@ public class KinectWrapper {
         Sketch.print("Tracking user changed ");
         Sketch.println(preId, curId);
         startTrackingFC = sk.frameCount;
+        validBodyMove = false;
         bodyMovePattern.trackingUserChanged(preId, curId);
     }
 

@@ -179,9 +179,9 @@ class PolygonBlob extends Polygon {
         }
         Sketch sk = Sketch.getSK();
         sk.pushMatrix();
-        sk.stroke(255, 0, 0);
+        sk.stroke(120, 50, 0, 60);
         sk.noFill();
-        sk.strokeWeight(4);
+        sk.strokeWeight(1);
         sk.translate(kinect.getOffset(), 0);
         sk.scale(kinect.getScale());
         sk.beginShape();
