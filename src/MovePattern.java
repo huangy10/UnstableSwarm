@@ -1,6 +1,7 @@
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PVector;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class MovePattern {
 
@@ -32,6 +33,7 @@ public class MovePattern {
 
     static void setGlobalEnabledPattern(MovePattern globalEnabledPattern) {
         if(!globalEnabledPattern.equals(MovePattern.globalEnabledPattern)) {
+            Sketch.getSK().state = globalEnabledPattern.getState();
             globalEnabledPattern.patternIsEnabled();
             if (MovePattern.globalEnabledPattern != null)
                 MovePattern.globalEnabledPattern.patternIsDisabled();
@@ -165,5 +167,9 @@ public class MovePattern {
 
     void patternIsDisabled() {
         doSwithcColor = false;
+    }
+
+    Sketch.State getState() {
+        throw new NotImplementedException();
     }
 }

@@ -13,6 +13,11 @@ public class LogoMovePattern extends GatherMovePattern {
     }
 
     @Override
+    Sketch.State getState() {
+        return Sketch.State.Logo;
+    }
+
+    @Override
     void patternIsEnabled() {
         super.patternIsEnabled();
         transCounter = (int) sk.frameRate * 3;

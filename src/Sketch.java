@@ -16,7 +16,7 @@ public class Sketch extends PApplet {
 
     private static Sketch sk = null;
     private float t;
-    private State state = State.Free;
+    State state = State.Free;
     private PImage logo;
     private float logoScale = 1f;
     private int defaultParticleColor = color(80);
@@ -89,13 +89,10 @@ public class Sketch extends PApplet {
     public void mousePressed() {
         if (state == State.Gather) {
             MovePattern.setGlobalEnabledPattern(FishFollowMovePattern.defaultPattern);
-            state = State.Fish;
         } else if (state == State.Fish) {
             MovePattern.setGlobalEnabledPattern(LogoMovePattern.defaultPattern);
-            state = State.Logo;
         } else {
             MovePattern.setGlobalEnabledPattern(GatherMovePattern.defaultPattern);
-            state = State.Gather;
         }
     }
 

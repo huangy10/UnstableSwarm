@@ -11,6 +11,11 @@ public class GatherMovePattern extends MovePattern {
     }
 
     @Override
+    Sketch.State getState() {
+        return Sketch.State.Gather;
+    }
+
+    @Override
     void update(Particle p) {
         computeForce(p);
         applyForce(p);

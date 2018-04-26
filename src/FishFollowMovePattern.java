@@ -16,6 +16,11 @@ public class FishFollowMovePattern extends MovePattern {
     }
 
     @Override
+    Sketch.State getState() {
+        return Sketch.State.Fish;
+    }
+
+    @Override
     void update(Particle p) {
         //
         if (p.outOfScreen()) {
