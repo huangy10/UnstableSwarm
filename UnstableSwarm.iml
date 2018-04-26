@@ -8,5 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="core" level="application" />
+    <orderEntry type="library" name="SimpleOpenNI" level="project" />
+    <orderEntry type="library" name="blobDetection" level="project" />
   </component>
 </module>

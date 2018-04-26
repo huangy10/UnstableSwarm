@@ -1,3 +1,4 @@
+import SimpleOpenNI.SimpleOpenNI;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PImage;
@@ -37,18 +38,21 @@ public class Sketch extends PApplet {
     int[][] colorPlate;
     int colorPlateNum;
 
+    KinectWrapper kinect;
+
     @Override
     public void settings() {
         if (Sketch.sk == null)
             Sketch.sk = this;
-//        size(1280, 720);
-        fullScreen();
+        size(1280, 720);
+//        fullScreen();
     }
 
     @Override
     public void setup() {
         loadLogo();
         loadColorPlate();
+        connectToKinect();
         GatherMovePattern.defaultPattern.gravityCenter = new PVector(width / 2, height / 2);
         LogoMovePattern.defaultPattern.gravityCenter = new PVector(width / 2, height / 2);
 
@@ -60,12 +64,14 @@ public class Sketch extends PApplet {
 
         MovePattern.setGlobalEnabledPattern(GatherMovePattern.defaultPattern);
 
+        smooth();
         println("Done setup");
         println("----");
     }
 
     @Override
     public void draw() {
+        kinect.update();
         MovePattern.getGlobalEnabledPattern().update();
         for (Swarm s: swarms) {
             s.update();
@@ -79,10 +85,13 @@ public class Sketch extends PApplet {
 
         swarmLayer.endDraw();
         particleLayer.endDraw();
+
+
         t += 0.01f;
         surface.setTitle("Framerate: " + frameRate);
 
         MovePattern.getGlobalEnabledPattern().renderLayers();
+        kinect.render();
     }
 
     @Override
@@ -115,6 +124,11 @@ public class Sketch extends PApplet {
                 colorPlate[i][j] = Integer.parseInt(colorStrings[j]);
             }
         }
+    }
+
+    private void connectToKinect() {
+        kinect = new KinectWrapper(this);
+        kinect.configrueKinect();
     }
 
     private void createLayers() {
@@ -212,4 +226,18 @@ public class Sketch extends PApplet {
     float perlinNoiseWithSeedAndSwarmId(float seed, int swarmId) {
         return noise(swarmId * 10, seed, t);
     }
+
+    public void onNewUser(SimpleOpenNI curContext, int userId) {
+        kinect.onNewUser(curContext, userId);
+    }
+
+    public void onLostUser(SimpleOpenNI curContext, int userId) {
+        kinect.onLostUser(curContext, userId);
+    }
+
+    public void onVisibleUser(SimpleOpenNI curContext,int userId) {
+//        println("onVisibleUser: " + userId);
+        kinect.onVisibleUser(curContext, userId);
+    }
+
 }
