@@ -180,6 +180,7 @@ class PolygonBlob extends Polygon {
         Sketch sk = Sketch.getSK();
         sk.pushMatrix();
         sk.stroke(255, 0, 0);
+        sk.noFill();
         sk.strokeWeight(4);
         sk.translate(kinect.getOffset(), 0);
         sk.scale(kinect.getScale());
@@ -191,7 +192,12 @@ class PolygonBlob extends Polygon {
         sk.popMatrix();
     }
 
-    void contains(PVector pt) {
-        super.contains((pt.x - kinect.getOffset()) / kinect.getScale(), pt.y / kinect.getScale());
+    boolean contains(PVector pt) {
+        return super.contains((pt.x - kinect.getOffset()) / kinect.getScale(), pt.y / kinect.getScale());
+    }
+
+    void coordConvertToScreen(float x, float y, PVector pt) {
+        pt.x = x * kinect.getScale() + kinect.getOffset();
+        pt.y = y * kinect.getScale();
     }
 }

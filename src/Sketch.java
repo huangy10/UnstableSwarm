@@ -1,4 +1,5 @@
 import SimpleOpenNI.SimpleOpenNI;
+import com.sun.xml.internal.ws.wsdl.writer.document.soap.Body;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PImage;
@@ -12,7 +13,7 @@ import java.util.List;
 public class Sketch extends PApplet {
 
     enum State {
-        Free, Gather, Fish, Logo
+        Free, Gather, Fish, Logo, Body
     }
 
     private static Sketch sk = null;
@@ -38,8 +39,6 @@ public class Sketch extends PApplet {
     int[][] colorPlate;
     int colorPlateNum;
 
-    KinectWrapper kinect;
-
     @Override
     public void settings() {
         if (Sketch.sk == null)
@@ -52,10 +51,9 @@ public class Sketch extends PApplet {
     public void setup() {
         loadLogo();
         loadColorPlate();
-        connectToKinect();
         GatherMovePattern.defaultPattern.gravityCenter = new PVector(width / 2, height / 2);
         LogoMovePattern.defaultPattern.gravityCenter = new PVector(width / 2, height / 2);
-
+        BodyMovePattern.defaultPattern.configure();
         createParticlesAndSwarms();
         createLayers();
 
@@ -71,8 +69,8 @@ public class Sketch extends PApplet {
 
     @Override
     public void draw() {
-        kinect.update();
         MovePattern.getGlobalEnabledPattern().update();
+        BodyMovePattern.defaultPattern.updateKinect(); // Always update kinect
         for (Swarm s: swarms) {
             s.update();
         }
@@ -91,7 +89,9 @@ public class Sketch extends PApplet {
         surface.setTitle("Framerate: " + frameRate);
 
         MovePattern.getGlobalEnabledPattern().renderLayers();
-        kinect.render();
+
+        BodyMovePattern.defaultPattern.kinect.debugRender();
+        BodyMovePattern.defaultPattern.kinect.poly.drawPolygon();
     }
 
     @Override
@@ -124,11 +124,6 @@ public class Sketch extends PApplet {
                 colorPlate[i][j] = Integer.parseInt(colorStrings[j]);
             }
         }
-    }
-
-    private void connectToKinect() {
-        kinect = new KinectWrapper(this);
-        kinect.configrueKinect();
     }
 
     private void createLayers() {
@@ -228,16 +223,16 @@ public class Sketch extends PApplet {
     }
 
     public void onNewUser(SimpleOpenNI curContext, int userId) {
-        kinect.onNewUser(curContext, userId);
+        if (BodyMovePattern.defaultPattern.enableDebug ||
+                BodyMovePattern.defaultPattern.isGloballyEnabled()) {
+            BodyMovePattern.defaultPattern.onNewUser(curContext, userId);
+        }
     }
 
     public void onLostUser(SimpleOpenNI curContext, int userId) {
-        kinect.onLostUser(curContext, userId);
+        if (BodyMovePattern.defaultPattern.enableDebug ||
+                BodyMovePattern.defaultPattern.isGloballyEnabled()) {
+            BodyMovePattern.defaultPattern.onLostUser(curContext, userId);
+        }
     }
-
-    public void onVisibleUser(SimpleOpenNI curContext,int userId) {
-//        println("onVisibleUser: " + userId);
-        kinect.onVisibleUser(curContext, userId);
-    }
-
 }

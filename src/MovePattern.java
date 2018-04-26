@@ -1,4 +1,3 @@
-import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PVector;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -22,6 +21,8 @@ public class MovePattern {
     int curBgColor = 0xffffff;
 
     int lastEnabledAtFC = 0;
+
+    private boolean globallyEnabled = false;
 
     MovePattern() {
         sk = Sketch.getSK();
@@ -159,6 +160,7 @@ public class MovePattern {
     }
 
     void patternIsEnabled() {
+        globallyEnabled = true;
         lastEnabledAtFC = sk.frameCount;
         if (enableColorEasyIn) {
             switchColorBeginFC = sk.frameCount + 1;
@@ -166,10 +168,15 @@ public class MovePattern {
     }
 
     void patternIsDisabled() {
+        globallyEnabled = false;
         doSwithcColor = false;
     }
 
     Sketch.State getState() {
         throw new NotImplementedException();
+    }
+
+    boolean isGloballyEnabled() {
+        return globallyEnabled;
     }
 }

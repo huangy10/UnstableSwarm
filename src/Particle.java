@@ -3,6 +3,7 @@ import processing.core.PVector;
 public class Particle extends Movable {
     int defaultColor;
     PVector rootPos;    // root position which the particle should return
+    PVector goalPos;    // goal
     Swarm swarm;
 
     int color;
@@ -16,6 +17,7 @@ public class Particle extends Movable {
         super(0);
         this.mass = 10;
         this.rootPos = new PVector();
+        this.goalPos = new PVector(0, 0);
 
         Sketch sk = Sketch.getSK();
         colorPlateIdx = (int) sk.random(sk.colorPlate[0].length);
