@@ -16,8 +16,8 @@ public class BodyMovePattern extends GatherMovePattern {
         super();
         enableColorTransition = true;
         enableColorEasyIn = false;
-        leastEnableInterval = 30 * 10;
-        mostEnableDuration = 30 * 10;
+        leastEnableInterval = 30 * 60;
+        mostEnableDuration = 30 * 30;
     }
 
     void configure() {

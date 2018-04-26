@@ -5,6 +5,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 public class MovePattern {
 
     private static MovePattern globalEnabledPattern;
+    private static MovePattern preGlobalEnabledPattern;
     Sketch sk;
     boolean enableRender = true;
     boolean enableColorTransition = false;
@@ -37,17 +38,21 @@ public class MovePattern {
         return globalEnabledPattern;
     }
 
+    static MovePattern getPreGlobalEnabledPattern() {
+        return preGlobalEnabledPattern;
+    }
+
     static boolean setGlobalEnabledPattern(MovePattern globalEnabledPattern) {
         if (!globalEnabledPattern.canBeEnabled() ||
                 (MovePattern.globalEnabledPattern != null && !MovePattern.globalEnabledPattern.canBeDisabled()))
             return false;
+        preGlobalEnabledPattern = MovePattern.globalEnabledPattern;
         if(!globalEnabledPattern.equals(MovePattern.globalEnabledPattern)) {
             Sketch.getSK().state = globalEnabledPattern.getState();
             globalEnabledPattern.patternIsEnabled();
             if (MovePattern.globalEnabledPattern != null)
                 MovePattern.globalEnabledPattern.patternIsDisabled();
         }
-
         MovePattern.globalEnabledPattern = globalEnabledPattern;
         return true;
     }

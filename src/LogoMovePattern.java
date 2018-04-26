@@ -3,6 +3,7 @@ import processing.core.PVector;
 public class LogoMovePattern extends GatherMovePattern {
     static final LogoMovePattern defaultPattern = new LogoMovePattern();
     int transCounter = 0;
+    boolean renderSwarm = true;
 
     LogoMovePattern() {
         super();
@@ -21,6 +22,8 @@ public class LogoMovePattern extends GatherMovePattern {
     void patternIsEnabled() {
         super.patternIsEnabled();
         transCounter = (int) sk.frameRate * 3;
+        renderSwarm = FishFollowMovePattern.defaultPattern.equals(
+                MovePattern.getPreGlobalEnabledPattern());
     }
 
     @Override
@@ -70,6 +73,7 @@ public class LogoMovePattern extends GatherMovePattern {
 
     @Override
     void render(Swarm s) {
+        if (!renderSwarm) return;
         float distance = s.cachedProperty;
         if (distance > 50) {
             super.render(s);

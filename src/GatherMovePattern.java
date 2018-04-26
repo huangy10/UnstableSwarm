@@ -11,6 +11,13 @@ public class GatherMovePattern extends MovePattern {
     }
 
     @Override
+    void patternIsEnabled() {
+        leastEnableDuration = 30 * (int) sk.random(10, 40);
+        mostEnableDuration = leastEnableDuration + 10;
+        super.patternIsEnabled();
+    }
+
+    @Override
     Sketch.State getState() {
         return Sketch.State.Gather;
     }
