@@ -72,8 +72,8 @@ public class KinectWrapper {
             int[] userMap = context.userMap();
             int idx, blobIdx;
             blobProcessImage.loadPixels();
-            for (int i = 0; i < blobProcessImage.width; i += 1) {
-                for (int j = 0; j < blobProcessImage.height; j += 1) {
+            for (int i = step * 3; i < blobProcessImage.width - step * 3; i += 1) {
+                for (int j = step * 3; j < blobProcessImage.height - step * 3; j += 1) {
                     blobIdx = i + j * blobProcessImage.width;
                     idx = i * step + j * context.depthWidth() * step;
                     if (userMap[idx] == currentTrackingUserId) {
