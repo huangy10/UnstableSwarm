@@ -13,7 +13,7 @@ public class FishFollowMovePattern extends MovePattern {
         super();
         enableColorTransition = true;
         enableColorEasyIn = false;
-        mostEnableDuration = 30 * 60;
+        mostEnableDuration = 30 * 10;
     }
 
     @Override

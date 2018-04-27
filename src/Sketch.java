@@ -43,8 +43,8 @@ public class Sketch extends PApplet {
     public void settings() {
         if (Sketch.sk == null)
             Sketch.sk = this;
-//        size(1280, 720);
-        fullScreen();
+        size(1280, 720);
+//        fullScreen();
     }
 
     @Override
@@ -101,11 +101,11 @@ public class Sketch extends PApplet {
         switchToNRandomonkinectState();
     }
 
-    public void switchToNRandomonkinectState() {
+    boolean switchToNRandomonkinectState() {
         int idx = (int) random(0, 3);
         MovePattern[] patterns = {FishFollowMovePattern.defaultPattern, LogoMovePattern.defaultPattern,
                 GatherMovePattern.defaultPattern};
-        MovePattern.setGlobalEnabledPattern(patterns[idx]);
+        return MovePattern.setGlobalEnabledPattern(patterns[idx]);
     }
 
     private void loadLogo() {

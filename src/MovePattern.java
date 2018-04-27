@@ -1,3 +1,4 @@
+import com.sun.xml.internal.ws.wsdl.writer.document.soap.Body;
 import processing.core.PGraphics;
 import processing.core.PVector;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -44,14 +45,15 @@ public class MovePattern {
 
     static boolean setGlobalEnabledPattern(MovePattern globalEnabledPattern) {
         if (!globalEnabledPattern.canBeEnabled() ||
-                (MovePattern.globalEnabledPattern != null && !MovePattern.globalEnabledPattern.canBeDisabled()))
+                (MovePattern.globalEnabledPattern != null &&
+                        !MovePattern.globalEnabledPattern.canBeDisabled()))
             return false;
         preGlobalEnabledPattern = MovePattern.globalEnabledPattern;
         if(!globalEnabledPattern.equals(MovePattern.globalEnabledPattern)) {
             Sketch.getSK().state = globalEnabledPattern.getState();
-            globalEnabledPattern.patternIsEnabled();
             if (MovePattern.globalEnabledPattern != null)
                 MovePattern.globalEnabledPattern.patternIsDisabled();
+            globalEnabledPattern.patternIsEnabled();
         }
         MovePattern.globalEnabledPattern = globalEnabledPattern;
         return true;
@@ -86,7 +88,15 @@ public class MovePattern {
 
     void stateAutoSwitch() {
         if (mostEnableDuration > 0 && sk.frameCount - lastEnabledAtFC > mostEnableDuration) {
-            sk.switchToNRandomonkinectState();
+            boolean flag = sk.switchToNRandomonkinectState();
+            if (BodyMovePattern.class.isInstance(this)) {
+                if (flag) {
+                    Sketch.println("Switch");
+                } else {
+                    Sketch.println(this.canBeDisabled());
+                    Sketch.print(sk.frameCount, lastEnabledAtFC, mostEnableDuration, leastEnableDuration);
+                }
+            }
         }
     }
 
@@ -193,12 +203,14 @@ public class MovePattern {
         if (enableColorEasyIn) {
             switchColorBeginFC = sk.frameCount + 1;
         }
+        Sketch.println(this.getClass().toString() + " is enabled");
     }
 
     void patternIsDisabled() {
         globallyEnabled = false;
         doSwithcColor = false;
-        lastEnabledAtFC = sk.frameCount;
+        lastDisabledAtFC = sk.frameCount;
+        Sketch.println(this.getClass().toString() + " is disabled");
     }
 
     Sketch.State getState() {

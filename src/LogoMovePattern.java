@@ -11,6 +11,9 @@ public class LogoMovePattern extends GatherMovePattern {
         enableRender = true;
         enableColorTransition = false;
         enableColorEasyIn = true;
+
+        leastEnableDuration = 30 * 3;
+        mostEnableDuration = 30 * 4;
     }
 
     @Override
@@ -19,9 +22,15 @@ public class LogoMovePattern extends GatherMovePattern {
     }
 
     @Override
+    protected void updateDurationControl() {
+        // Do nothing
+    }
+
+    @Override
     void patternIsEnabled() {
         super.patternIsEnabled();
-        transCounter = (int) sk.frameRate * 3;
+        transCounter = (int) sk
+                .frameRate * 3;
         renderSwarm = FishFollowMovePattern.defaultPattern.equals(
                 MovePattern.getPreGlobalEnabledPattern());
     }

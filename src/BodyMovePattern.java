@@ -16,7 +16,7 @@ public class BodyMovePattern extends GatherMovePattern {
         super();
         enableColorTransition = true;
         enableColorEasyIn = false;
-        leastEnableInterval = 30 * 60;
+        leastEnableInterval = 30 * 15;
         mostEnableDuration = 30 * 30;
     }
 
@@ -52,6 +52,11 @@ public class BodyMovePattern extends GatherMovePattern {
 
     void updateKinect() {
         kinect.update(enableDebug || isGloballyEnabled());
+    }
+
+    @Override
+    protected void updateDurationControl() {
+        // do nothing here
     }
 
     @Override
@@ -133,7 +138,9 @@ public class BodyMovePattern extends GatherMovePattern {
         float forceDir = sk.perlinNoiseWithSeed(p.noiseSeed / 100) * sk.PI * 6;
         float forceStrength = p.frictionAcc * 16;
         p.force.set(forceStrength * Sketch.cos(forceDir), forceStrength * Sketch.sin(forceDir));
-        p.force.add(kinect.bodyMove.limit(p.frictionAcc * 32));
+        if (kinect.validBodyMove) {
+            p.force.add(kinect.bodyMove.limit(p.frictionAcc * 32));
+        }
     }
 
     @Override
@@ -153,11 +160,12 @@ public class BodyMovePattern extends GatherMovePattern {
         if (preId == -1 && curId != -1) {
             MovePattern.setGlobalEnabledPattern(this);
             Sketch.println("Activate");
-        } else if (preId >= 0 && curId == -1) {
+        } else if (curId == -1) {
 //            Sketch.println("Deactivate");
             MovePattern.setGlobalEnabledPattern(
                     LogoMovePattern.defaultPattern
             );
+//            sk.switchToNRandomonkinectState();
         }
     }
 }

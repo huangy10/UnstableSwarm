@@ -12,9 +12,13 @@ public class GatherMovePattern extends MovePattern {
 
     @Override
     void patternIsEnabled() {
-        leastEnableDuration = 30 * (int) sk.random(10, 40);
-        mostEnableDuration = leastEnableDuration + 10;
+        updateDurationControl();
         super.patternIsEnabled();
+    }
+
+    protected void updateDurationControl() {
+        leastEnableDuration = 30 * (int) sk.random(10, 20);
+        mostEnableDuration = leastEnableDuration + 10;
     }
 
     @Override

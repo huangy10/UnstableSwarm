@@ -6,24 +6,25 @@ import processing.core.PVector;
 
 
 public class KinectWrapper {
+    static float kinectWidth = 640f;
+    static float kinectHeight = 480f;
+
     private SimpleOpenNI context;
     private BlobDetection blobDetection;
     private int currentTrackingUserId = -1;
     private int startTrackingFC = 0;
-    PVector bodyMove;
     private PVector bodyPos;
     boolean validBodyMove;
+    PVector bodyMove;
 
     private float scale;
-    static float kinectWidth = 640f;
-    static float kinectHeight = 480f;
+    private float offset = 0;
     private PImage blobProcessImage;
     private int step = 2;
     Sketch sk;
     PolygonBlob poly;
-    private float offset = 0;
 
-    BodyMovePattern bodyMovePattern;
+    private BodyMovePattern bodyMovePattern;
 
     KinectWrapper(PApplet applet, BodyMovePattern pattern) {
         context = new SimpleOpenNI(applet);
@@ -66,6 +67,13 @@ public class KinectWrapper {
             if (preId != currentTrackingUserId) {
                 trackingUserChanged(preId, currentTrackingUserId);
             }
+        }
+
+        if (currentTrackingUserId >= 0) {
+            // actively enable this status
+            MovePattern.setGlobalEnabledPattern(
+                    BodyMovePattern.defaultPattern
+            );
         }
 
         if (actively) {
