@@ -21,6 +21,7 @@ public class KinectWrapper {
     private float offset = 0;
     private PImage blobProcessImage;
     private int step = 2;
+    private boolean userInScreen = false;
     Sketch sk;
     PolygonBlob poly;
 
@@ -80,12 +81,14 @@ public class KinectWrapper {
             int[] userMap = context.userMap();
             int idx, blobIdx;
             blobProcessImage.loadPixels();
+            userInScreen = false;
             for (int i = step * 3; i < blobProcessImage.width - step * 3; i += 1) {
                 for (int j = step * 3; j < blobProcessImage.height - step * 3; j += 1) {
                     blobIdx = i + j * blobProcessImage.width;
                     idx = i * step + j * context.depthWidth() * step;
                     if (userMap[idx] == currentTrackingUserId) {
                         blobProcessImage.pixels[blobIdx] = sk.color(255);
+                        userInScreen = true;
                     } else {
                         blobProcessImage.pixels[blobIdx] = sk.color(0);
                     }
@@ -164,5 +167,9 @@ public class KinectWrapper {
 
     float getOffset() {
         return offset;
+    }
+
+    boolean isUserInScreen() {
+        return userInScreen;
     }
 }

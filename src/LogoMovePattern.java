@@ -12,8 +12,8 @@ public class LogoMovePattern extends GatherMovePattern {
         enableColorTransition = false;
         enableColorEasyIn = true;
 
-        leastEnableDuration = 30 * 3;
-        mostEnableDuration = 30 * 4;
+        leastEnableDuration = 30 * 9;
+        mostEnableDuration = 30 * 10;
     }
 
     @Override

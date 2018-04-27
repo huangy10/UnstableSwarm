@@ -61,6 +61,7 @@ public class BodyMovePattern extends GatherMovePattern {
 
     @Override
     void update(Particle p) {
+        if (!kinect.isUserInScreen()) return;
         applyBoundaryAcross(p);
         updateGoal(p, p.goalPos);
         if(kinect.poly.contains(p.loc)) {
@@ -80,6 +81,15 @@ public class BodyMovePattern extends GatherMovePattern {
             } else {
                 runToGoal(p, p.goalPos);
             }
+        }
+    }
+
+    @Override
+    void stateAutoSwitch() {
+        if (!kinect.isUserInScreen()) {
+            MovePattern.setGlobalEnabledPattern(FishFollowMovePattern.defaultPattern);
+        } else {
+            super.stateAutoSwitch();
         }
     }
 
